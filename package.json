@@ -51,13 +51,13 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/agora/rncr/react-native-chat-room",
+  "repository": "https://github.com/easemob/UIKit_Chatroom_rn",
   "author": "Asterisk <zuoyu@agora.io> (https://github.com/asteriskzuo)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/agora/rncr/react-native-chat-room/issues"
+    "url": "https://github.com/easemob/UIKit_Chatroom_rn/issues"
   },
-  "homepage": "https://github.com/agora/rncr/react-native-chat-room#readme",
+  "homepage": "https://github.com/easemob/UIKit_Chatroom_rn#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
