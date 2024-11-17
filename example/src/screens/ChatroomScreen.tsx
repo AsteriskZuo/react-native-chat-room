@@ -240,6 +240,7 @@ export function ChatroomScreen(props: Props) {
       {/* <Chatroom ref={chatroomRef} roomId={room.roomId} ownerId={room.owner} /> */}
       <Chatroom
         ref={chatroomRef}
+        // position={'absolute'}
         // GlobalBroadcast={GlobalBroadcast}
         // containerStyle={{ transform: [{ translateY: -pageY }] }}
         messageList={{

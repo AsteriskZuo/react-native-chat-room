@@ -60,6 +60,15 @@ type ChatroomModel = {
   roomId: string;
   ownerId: string;
 };
+
+type LayoutMode = {
+  /**
+   * Layout mode.
+   *
+   * default: 'relative'
+   */
+  position?: 'absolute' | 'relative' | undefined;
+};
 /**
  * Properties of the `Chatroom` component.
  */
@@ -69,6 +78,10 @@ export type ChatroomProps = React.PropsWithChildren<
      * Style of the container. This property can mainly change the display or hiding, position, size, background color, style, etc.
      */
     containerStyle?: StyleProp<ViewStyle>;
+    /**
+     * Style of the MessagePin and GlobalBroadcast.
+     */
+    messagePinAndBroadcastContainerStyle?: StyleProp<ViewStyle>;
     /**
      * Renderer for the GiftMessageList component. If not set, the built-in one is used.
      *
@@ -148,6 +161,7 @@ export type ChatroomProps = React.PropsWithChildren<
      */
     backgroundView?: React.ReactElement;
   } & ChatroomModel &
+    LayoutMode &
     PropsWithTest &
     PropsWithError
 >;
@@ -350,7 +364,11 @@ export abstract class ChatroomBase extends React.PureComponent<
                     {(t) => {
                       this.i18n = t;
                       this.config = config;
-                      return this._render2();
+                      const { position = 'relative' } = this.props;
+                      if (position === 'absolute') {
+                        return this._absolute_render();
+                      }
+                      return this._relative_render();
                     }}
                   </I18nContext.Consumer>
                 );
@@ -362,7 +380,7 @@ export abstract class ChatroomBase extends React.PureComponent<
     );
   }
 
-  _render2(): React.ReactNode {
+  _relative_render(): React.ReactNode {
     const {
       containerStyle,
       messageList,
@@ -479,10 +497,12 @@ export abstract class ChatroomBase extends React.PureComponent<
     );
   }
 
-  _render(): React.ReactNode {
+  _absolute_render(): React.ReactNode {
     const {
       containerStyle,
+      messagePinAndBroadcastContainerStyle,
       messageList,
+      messagePin,
       globalBroadcast,
       input,
       gift,
@@ -552,7 +572,41 @@ export abstract class ChatroomBase extends React.PureComponent<
             />
           ) : null}
 
-          {this.config?.roomOption.globalBroadcast.isVisible === true ? (
+          {this.config?.roomOption.messagePin.isVisible === true &&
+          this.config?.roomOption.globalBroadcast.isVisible === true ? (
+            <View
+              style={[
+                {
+                  position: 'absolute',
+                  marginTop: 8,
+                  marginHorizontal: 8,
+                },
+                messagePinAndBroadcastContainerStyle,
+              ]}
+            >
+              <GMessagePin ref={this.messagePinRef} {...messagePin?.props} />
+              <View style={{ height: 8 }} />
+              <GGlobalBroadcast
+                ref={this.globalBroadcastRef}
+                containerStyle={{
+                  width: Dimensions.get('window').width - 16,
+                }}
+                {...globalBroadcast?.props}
+              />
+            </View>
+          ) : this.config?.roomOption.messagePin.isVisible === true &&
+            this.config?.roomOption.globalBroadcast.isVisible === false ? (
+            <GMessagePin
+              ref={this.messagePinRef}
+              containerStyle={{
+                position: 'absolute',
+                marginTop: 8,
+                marginHorizontal: 8,
+              }}
+              {...messagePin?.props}
+            />
+          ) : this.config?.roomOption.messagePin.isVisible === false &&
+            this.config?.roomOption.globalBroadcast.isVisible === true ? (
             <GGlobalBroadcast
               ref={this.globalBroadcastRef}
               containerStyle={{
