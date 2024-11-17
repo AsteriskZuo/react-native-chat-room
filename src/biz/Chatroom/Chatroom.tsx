@@ -40,6 +40,12 @@ import {
 } from '../MessageList';
 import { gMessageListHeight } from '../MessageList/MessageList.const'; // for test
 import {
+  MessagePin,
+  MessagePinComponent,
+  MessagePinProps,
+  MessagePinRef,
+} from '../MessagePin';
+import {
   BottomSheetParticipantList,
   BottomSheetParticipantListComponent,
   BottomSheetParticipantListProps,
@@ -76,6 +82,12 @@ export type ChatroomProps = React.PropsWithChildren<
      */
     GlobalBroadcast?: GlobalBroadcastComponent;
     /**
+     * Renderer for the MessagePin component. If not set, the built-in one is used.
+     *
+     * You can set whether to load through `RoomOption.messagePin`.
+     */
+    MessagePin?: MessagePinComponent;
+    /**
      * Renderer for the MessageList component. If not set, the built-in one is used.
      */
     MessageList?: MessageListComponent;
@@ -104,6 +116,12 @@ export type ChatroomProps = React.PropsWithChildren<
         MessageListProps,
         'onRequestCloseInputBar' | 'isInputBarShow' | 'onLongPressItem'
       >;
+    };
+    /**
+     * Properties of the Message pin component. If not set, the default value is used.
+     */
+    messagePin?: {
+      props?: MessagePinProps;
     };
     /**
      * Properties of the GlobalBroadcast component. If not set, the default value is used.
@@ -143,6 +161,7 @@ type ChatroomState = {
 
 let GGiftEffect: GiftMessageListComponent;
 let GGlobalBroadcast: GlobalBroadcastComponent;
+let GMessagePin: MessagePinComponent;
 let GMessageList: MessageListComponent;
 let GMessageInput: MessageInputComponent;
 let GBottomSheetParticipantList: BottomSheetParticipantListComponent;
@@ -166,6 +185,10 @@ export abstract class ChatroomBase extends React.PureComponent<
    * Reference to the MessageList component.
    */
   messageRef?: React.RefObject<MessageListRef>;
+  /**
+   * Reference to the MessagePin component.
+   */
+  messagePinRef?: React.RefObject<MessagePinRef>;
   /**
    * Reference to the GlobalBroadcast component.
    */
@@ -203,6 +226,7 @@ export abstract class ChatroomBase extends React.PureComponent<
 
     this.inputBarRef = React.createRef();
     this.messageRef = React.createRef();
+    this.messagePinRef = React.createRef();
     this.globalBroadcastRef = React.createRef();
     this.giftRef = React.createRef();
     this.memberRef = React.createRef();
@@ -210,6 +234,7 @@ export abstract class ChatroomBase extends React.PureComponent<
 
     GGiftEffect = props.GiftMessageList ?? GiftMessageList;
     GGlobalBroadcast = props.GlobalBroadcast ?? GlobalBroadcast;
+    GMessagePin = props.MessagePin ?? MessagePin;
     GMessageList = props.MessageList ?? MessageList;
     GMessageInput = props.MessageInput ?? MessageInput;
     GBottomSheetParticipantList =
@@ -251,6 +276,14 @@ export abstract class ChatroomBase extends React.PureComponent<
    */
   getMessageListRef() {
     return this.messageRef?.current;
+  }
+
+  /**
+   * Get the reference of the MessagePin component.
+   * @returns MessagePinRef | null.
+   */
+  getMessagePinRef() {
+    return this.messagePinRef?.current;
   }
 
   /**
@@ -317,7 +350,7 @@ export abstract class ChatroomBase extends React.PureComponent<
                     {(t) => {
                       this.i18n = t;
                       this.config = config;
-                      return this._render();
+                      return this._render2();
                     }}
                   </I18nContext.Consumer>
                 );
@@ -326,6 +359,123 @@ export abstract class ChatroomBase extends React.PureComponent<
           );
         }}
       </RoomContext.Consumer>
+    );
+  }
+
+  _render2(): React.ReactNode {
+    const {
+      containerStyle,
+      messageList,
+      globalBroadcast,
+      messagePin,
+      input,
+      gift,
+      children,
+      backgroundView,
+      participantList,
+    } = this.props;
+    return (
+      <View
+        ref={this.containerRef}
+        style={[
+          {
+            flex: 1,
+            // justifyContent: 'flex-end',
+          },
+          containerStyle,
+        ]}
+        onLayout={() => {
+          this.containerRef?.current?.measure?.(
+            (
+              _x: number,
+              _y: number,
+              _width: number,
+              _height: number,
+              _pageX: number,
+              pageY: number
+            ) => {
+              this.setState({ pageY: pageY });
+            }
+          );
+        }}
+      >
+        <View
+          style={{
+            flex: 1,
+          }}
+        >
+          {backgroundView}
+
+          <View
+            style={{ flex: 1 }}
+            onTouchEnd={() => {
+              if (this.inputBarRef?.current?.close) {
+                this.inputBarRef.current.close();
+              }
+            }}
+          >
+            {this.config?.roomOption.messagePin.isVisible === true ? (
+              <GMessagePin
+                ref={this.messagePinRef}
+                containerStyle={{ marginTop: 8, left: 8 }}
+                {...messagePin?.props}
+              />
+            ) : null}
+
+            {this.config?.roomOption.globalBroadcast.isVisible === true ? (
+              <GGlobalBroadcast
+                ref={this.globalBroadcastRef}
+                containerStyle={{
+                  marginTop: 8,
+                  marginHorizontal: 8,
+                  width: Dimensions.get('window').width - 16,
+                }}
+                {...globalBroadcast?.props}
+              />
+            ) : null}
+
+            <View style={{ flex: 1 }} />
+
+            {this.config?.roomOption.gift.isVisible === true ? (
+              <GGiftEffect
+                ref={this.giftRef}
+                containerStyle={{
+                  left: 16,
+                  marginTop: 16,
+                }}
+                {...gift?.props}
+              />
+            ) : null}
+
+            <GMessageList
+              ref={this.messageRef}
+              containerStyle={[
+                {
+                  marginTop: 8,
+                },
+              ]}
+              {...messageList?.props}
+            />
+
+            {children}
+          </View>
+
+          <GMessageInput
+            ref={this.inputBarRef}
+            onSended={(_content, message) => {
+              this.messageRef?.current?.addSendedMessage?.(message);
+            }}
+            closeAfterSend={true}
+            {...input?.props}
+          />
+
+          <GBottomSheetParticipantList
+            ref={this.memberRef}
+            maskStyle={{ transform: [{ translateY: -this.state.pageY }] }}
+            {...participantList?.props}
+          />
+        </View>
+      </View>
     );
   }
 

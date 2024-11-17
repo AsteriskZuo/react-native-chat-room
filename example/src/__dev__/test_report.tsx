@@ -7,6 +7,7 @@ import {
   createDarkTheme,
   createLightTheme,
   createPresetPalette,
+  ReportItemModel,
   seqId,
   SimulativeModalRef,
   Text,
@@ -53,7 +54,7 @@ const data = [
     title: 'Harassment or bullying',
     checked: false,
   },
-];
+] as ReportItemModel[];
 
 /**
  * for test report list.

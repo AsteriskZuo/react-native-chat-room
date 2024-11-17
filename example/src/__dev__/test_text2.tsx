@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { Text as RNText, View } from 'react-native';
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text as RNText,
+  View,
+} from 'react-native';
 import {
   createDarkTheme,
   createLightTheme,
@@ -75,6 +81,112 @@ export function TextComponent2(): JSX.Element {
   );
 }
 
+export function TextComponent3() {
+  const countRef = React.useRef(0);
+  const [text, setText] = React.useState('test');
+  const onPress = () => {
+    setText(countRef.current % 2 === 0 ? 'test' : 'test test');
+    countRef.current++;
+  };
+  return (
+    <View
+      style={{ top: 100, width: 100, height: 100, backgroundColor: 'red' }}
+      onTouchEnd={onPress}
+    >
+      <Text
+        style={{
+          backgroundColor: 'green',
+          alignSelf: 'flex-start',
+        }}
+      >
+        {text}
+      </Text>
+    </View>
+  );
+}
+
+export function TextComponent4() {
+  const [text] = React.useState(
+    'TextComponen t4TextComponen t4TextComponent4Teonent4T eonent4Teo nent4Teonen t4Teonent4Teonent4 Teonent4Te onent4Teonent4Tex tCom ponent4Tex tCompo nent4Tex tComponent4'
+  );
+  return (
+    <View>
+      <ScrollView
+        style={{ top: 100, width: 100, height: 100, backgroundColor: 'red' }}
+        // onPress={onPress}
+      >
+        {/* <ScrollView> */}
+        <Text
+          style={{
+            backgroundColor: 'green',
+            alignSelf: 'flex-start',
+            flexWrap: 'wrap',
+            // width: 100,
+            // height: 100,
+          }}
+          numberOfLines={undefined}
+        >
+          {text}
+        </Text>
+        {/* </ScrollView> */}
+      </ScrollView>
+    </View>
+  );
+}
+
+const ScrollableText = () => {
+  return (
+    <View style={styles.v}>
+      <Pressable
+        onPress={() => {
+          console.log('Outer Pressable clicked');
+        }}
+      >
+        <ScrollView style={styles.container}>
+          <Pressable
+            onPress={() => {
+              console.log('Inner Pressable clicked');
+            }}
+            onLongPress={() => {
+              console.log('Inner Pressable long clicked');
+            }}
+          >
+            <Text style={styles.text}>
+              {/* 在这里添加长文本内容 */}
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+              enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+              reprehenderit in voluptate velit esse cillum dolore eu fugiat
+              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+              sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </Text>
+          </Pressable>
+        </ScrollView>
+      </Pressable>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  v: {
+    flex: 0,
+    top: 100,
+    backgroundColor: 'blue',
+  },
+  container: {
+    // flex: 1,
+    height: 100,
+    // backgroundColor: 'lightgrey',
+  },
+  text: {
+    fontSize: 16,
+    padding: 10,
+    width: 100,
+    // backgroundColor: 'white',
+  },
+});
+
 export default function test_text() {
   const palette = createPresetPalette();
   const light = createLightTheme(palette);
@@ -83,7 +195,7 @@ export default function test_text() {
   return (
     <ThemeContextProvider value={theme}>
       <PaletteContextProvider value={palette}>
-        <TextComponent2 />
+        <ScrollableText />
       </PaletteContextProvider>
     </ThemeContextProvider>
   );
