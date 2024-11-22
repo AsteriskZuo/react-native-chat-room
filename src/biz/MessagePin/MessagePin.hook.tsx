@@ -30,6 +30,7 @@ export function useMessagePin(props: MessagePinProps) {
   const avatarRef = React.useRef<string>();
   const msgRef = React.useRef<ChatMessage>();
   const idRef = React.useRef<string>('');
+  const tagRef = React.useRef<string>('');
   const nicknameRef = React.useRef<string>();
   const im = useRoomContext();
 
@@ -41,6 +42,7 @@ export function useMessagePin(props: MessagePinProps) {
       avatarRef.current = task.avatar;
       idRef.current = task.msg.msgId;
       nicknameRef.current = task.nickname;
+      tagRef.current = task.tag ?? '';
       msgRef.current = task.msg;
       // setId((_) => undefined);
       // setTimeout(() => {
@@ -83,6 +85,7 @@ export function useMessagePin(props: MessagePinProps) {
               pushTask?.({
                 id: msg.msgId,
                 msg: msg,
+                tag: 'pin2',
                 avatar: user?.avatarURL,
                 nickname: nickname,
               });
@@ -103,6 +106,7 @@ export function useMessagePin(props: MessagePinProps) {
     id,
     msgRef,
     init,
+    tagRef,
   };
 }
 

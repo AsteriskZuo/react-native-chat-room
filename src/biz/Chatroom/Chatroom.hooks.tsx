@@ -245,6 +245,7 @@ export class Chatroom extends ChatroomBase {
                 const nickname = user?.nickname ?? user?.userId ?? 'unknown';
                 this.messagePinRef?.current?.pushTask?.({
                   id: msg.msgId,
+                  tag: 'pin2',
                   msg: msg,
                   avatar: user?.avatarURL,
                   nickname: nickname,

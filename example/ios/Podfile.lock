@@ -394,7 +394,7 @@ PODS:
   - React-jsinspector (0.71.11)
   - React-logger (0.71.11):
     - glog
-  - react-native-chat-room (1.0.1-beta.0):
+  - react-native-chat-room (1.1.0-beta.0):
     - React-Core
   - react-native-chat-sdk (1.6.2):
     - HyphenateChat (= 4.8.1)
@@ -755,7 +755,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 089cd07c76ecf498960a64ba8ae0f2dddd382f44
   React-jsinspector: b6ed4cb3ffa27a041cd440300503dc512b761450
   React-logger: 186dd536128ae5924bc38ed70932c00aa740cd5b
-  react-native-chat-room: 4c4afab990da5db3ffb97595a4c2bed3ef9b2d33
+  react-native-chat-room: f2ee9c0be473ede10cb3b68b743fc4804c2542c0
   react-native-chat-sdk: 9766d84549ae9ee0cec5be521032e6a8a983985f
   react-native-safe-area-context: 33e71d7408dffe148b08968d97a524009634ccc8
   React-perflogger: e706562ab7eb8eb590aa83a224d26fa13963d7f2

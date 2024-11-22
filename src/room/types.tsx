@@ -60,6 +60,7 @@ export type RoomEventType =
   | 'send_gift'
   | 'send_text'
   | 'pin_message'
+  | 'unpin_message'
   | 'fetch_pin_message';
 
 /**

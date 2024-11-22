@@ -116,7 +116,11 @@ export function MessagePinItem(props: MessagePinItemProps) {
                     marginRight: 4,
                   }}
                 >
-                  <DefaultIconImage size={18} borderRadius={0} url={tag} />
+                  <DefaultIconImage
+                    size={18}
+                    borderRadius={0}
+                    localIcon={(ICON_ASSETS as any)[tag]('3x')}
+                  />
                 </View>
               ) : null
             ) : null}

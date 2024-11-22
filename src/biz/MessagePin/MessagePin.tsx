@@ -14,6 +14,7 @@ export const MessagePin = React.forwardRef<MessagePinRef, MessagePinProps>(
       pushTask,
       id,
       msgRef,
+      tagRef,
       avatarRef,
       nicknameRef,
       init,
@@ -53,6 +54,7 @@ export const MessagePin = React.forwardRef<MessagePinRef, MessagePinProps>(
           msg={msgRef.current}
           avatar={avatarRef.current}
           nickname={nicknameRef.current}
+          tag={tagRef.current}
         />
       </View>
     );

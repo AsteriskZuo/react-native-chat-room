@@ -442,18 +442,31 @@ export function useMessageListApi(params: {
     }
   };
 
-  const _pinMessage = (msg?: ChatMessage) => {
+  const _pinMessage = (isPin: string, msg?: ChatMessage) => {
     if (msg) {
-      im.pinMessage(msg)
-        .then(() => {
-          im.sendFinished({ event: 'pin_message' });
-        })
-        .catch((e) => {
-          im.sendError({
-            error: e,
-            from: useMessageListApi?.caller?.name,
+      if (isPin === 'unpin') {
+        im.unPinMessage(msg)
+          .then(() => {
+            im.sendFinished({ event: 'unpin_message' });
+          })
+          .catch((e) => {
+            im.sendError({
+              error: e,
+              from: useMessageListApi?.caller?.name,
+            });
           });
-        });
+      } else if (isPin === 'pin') {
+        im.pinMessage(msg)
+          .then(() => {
+            im.sendFinished({ event: 'pin_message' });
+          })
+          .catch((e) => {
+            im.sendError({
+              error: e,
+              from: useMessageListApi?.caller?.name,
+            });
+          });
+      }
     }
   };
   const _deleteMessage = (msg?: ChatMessage) => {
@@ -498,20 +511,32 @@ export function useMessageListApi(params: {
     }
   };
 
-  const onShowMenu = (item: MessageListItemModel) => {
+  const onShowMenu = async (item: MessageListItemModel) => {
     const from = item.msg?.from;
     let items: InitMenuItemsType[] = [];
 
     if (roomOption.messagePin.isVisible === true) {
       if (im.ownerId === im.userId) {
-        items.push({
-          name: 'Pin',
-          isHigh: false,
-          onClicked: () => {
-            _pinMessage(item.msg);
-            menuRef?.current?.startHide?.();
-          },
-        });
+        let msgPinInfo = await item.msg?.getPinInfo;
+        if (msgPinInfo) {
+          items.push({
+            name: 'Unpin',
+            isHigh: false,
+            onClicked: () => {
+              _pinMessage('unpin', item.msg);
+              menuRef?.current?.startHide?.();
+            },
+          });
+        } else {
+          items.push({
+            name: 'Pin',
+            isHigh: false,
+            onClicked: () => {
+              _pinMessage('pin', item.msg);
+              menuRef?.current?.startHide?.();
+            },
+          });
+        }
       }
     }
 
